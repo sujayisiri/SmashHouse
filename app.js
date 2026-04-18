@@ -23,7 +23,141 @@ const state = {
   matches: [],
   selectedPlayers: [],
   generatedTeams: [],
+  currentClub: null, // Current club information
 };
+
+// ============================================================
+// Multi-Tenant Club Management
+// ============================================================
+
+/**
+ * Get club slug from URL parameter or localStorage
+ * Priority: URL parameter > localStorage > default
+ */
+function getClubSlug() {
+  // Check URL parameter (?club=smash-house)
+  const urlParams = new URLSearchParams(window.location.search);
+  const clubParam = urlParams.get("club");
+
+  if (clubParam) {
+    // Save to localStorage for future visits
+    localStorage.setItem("selectedClub", clubParam);
+    return clubParam;
+  }
+
+  // Check localStorage
+  const savedClub = localStorage.getItem("selectedClub");
+  if (savedClub) {
+    return savedClub;
+  }
+
+  // Default club (for backward compatibility)
+  return "smash-house";
+}
+
+/**
+ * Load club information from database
+ */
+async function loadClubInfo() {
+  const clubSlug = getClubSlug();
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("clubs")
+      .select("*")
+      .eq("slug", clubSlug)
+      .single();
+
+    if (error) {
+      console.error("Error loading club:", error);
+      // If club doesn't exist, try to create it with default values
+      return await createDefaultClub(clubSlug);
+    }
+
+    state.currentClub = data;
+    applyClubBranding(data);
+    return data;
+  } catch (err) {
+    console.error("Error loading club info:", err);
+    showToast("Error loading club information", "error");
+    return null;
+  }
+}
+
+/**
+ * Create default club if it doesn't exist (for migration/backward compatibility)
+ */
+async function createDefaultClub(slug) {
+  const defaultClubs = {
+    "smash-house": {
+      name: "Smash House",
+      primaryColor: "#667eea",
+      secondaryColor: "#764ba2",
+    },
+  };
+
+  const clubData = defaultClubs[slug] || {
+    name: slug
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" "),
+    primaryColor: "#667eea",
+    secondaryColor: "#764ba2",
+  };
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("clubs")
+      .insert([
+        {
+          slug: slug,
+          name: clubData.name,
+          primary_color: clubData.primaryColor,
+          secondary_color: clubData.secondaryColor,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating club:", error);
+      return null;
+    }
+
+    state.currentClub = data;
+    applyClubBranding(data);
+    return data;
+  } catch (err) {
+    console.error("Error creating default club:", err);
+    return null;
+  }
+}
+
+/**
+ * Apply club branding to the UI
+ */
+function applyClubBranding(club) {
+  // Update club name in header
+  const logoElement = document.querySelector(".logo h1");
+  if (logoElement) {
+    logoElement.textContent = `🏸 ${club.name}`;
+  }
+
+  // Update page title
+  document.title = club.name;
+
+  // Apply custom colors (optional - can be extended)
+  if (club.primary_color && club.secondary_color) {
+    document.documentElement.style.setProperty(
+      "--club-primary",
+      club.primary_color,
+    );
+    document.documentElement.style.setProperty(
+      "--club-secondary",
+      club.secondary_color,
+    );
+  }
+}
 
 // ============================================================
 // Utility Functions
@@ -135,9 +269,14 @@ async function loadPlayers() {
   showLoading();
 
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     const { data, error } = await supabaseClient
       .from("players")
       .select("*")
+      .eq("club_id", state.currentClub.id)
       .order("name");
 
     if (error) throw error;
@@ -210,9 +349,13 @@ async function addPlayer(e) {
   showLoading();
 
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     const { data, error } = await supabaseClient
       .from("players")
-      .insert([{ name }])
+      .insert([{ name, club_id: state.currentClub.id }])
       .select();
 
     if (error) throw error;
@@ -239,10 +382,15 @@ async function deletePlayer(playerId) {
   showLoading();
 
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     const { error } = await supabaseClient
       .from("players")
       .delete()
-      .eq("id", playerId);
+      .eq("id", playerId)
+      .eq("club_id", state.currentClub.id);
 
     if (error) throw error;
 
@@ -307,10 +455,15 @@ async function savePlayerEdit(playerId) {
   showLoading();
 
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     const { error } = await supabaseClient
       .from("players")
       .update({ name: newName })
-      .eq("id", playerId);
+      .eq("id", playerId)
+      .eq("club_id", state.currentClub.id);
 
     if (error) throw error;
 
@@ -337,9 +490,14 @@ async function loadPlayersForTeamSelection() {
   showLoading();
 
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     const { data, error } = await supabaseClient
       .from("players")
       .select("*")
+      .eq("club_id", state.currentClub.id)
       .order("name");
 
     if (error) throw error;
@@ -455,9 +613,14 @@ window.generateRandomTeams = generateRandomTeams;
 
 async function loadPlayersForMatchForm() {
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     const { data, error } = await supabaseClient
       .from("players")
       .select("*")
+      .eq("club_id", state.currentClub.id)
       .order("name");
 
     if (error) throw error;
@@ -501,10 +664,15 @@ async function checkDuplicateMatch(
   team2Score,
 ) {
   try {
+    if (!state.currentClub) {
+      return null;
+    }
+
     // Get all matches for this date
     const { data, error } = await supabaseClient
       .from("matches")
       .select("*")
+      .eq("club_id", state.currentClub.id)
       .eq("match_date", matchDate);
 
     if (error) throw error;
@@ -603,10 +771,15 @@ async function addMatch(e) {
   showLoading();
 
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     const { data, error } = await supabaseClient
       .from("matches")
       .insert([
         {
+          club_id: state.currentClub.id,
           match_date: matchDate,
           team1_player1_id: team1Player1,
           team1_player2_id: team1Player2,
@@ -638,6 +811,10 @@ async function loadMatches() {
   showLoading();
 
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     const { data, error } = await supabaseClient
       .from("matches")
       .select(
@@ -649,6 +826,7 @@ async function loadMatches() {
         team2_player2:players!matches_team2_player2_id_fkey(name)
       `,
       )
+      .eq("club_id", state.currentClub.id)
       .order("match_date", { ascending: false })
       .order("created_at", { ascending: false });
 
@@ -719,10 +897,15 @@ async function deleteMatch(matchId) {
   showLoading();
 
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     const { error } = await supabaseClient
       .from("matches")
       .delete()
-      .eq("id", matchId);
+      .eq("id", matchId)
+      .eq("club_id", state.currentClub.id);
 
     if (error) throw error;
 
@@ -746,10 +929,20 @@ async function loadLeaderboard() {
   showLoading();
 
   try {
+    if (!state.currentClub) {
+      throw new Error("Club not loaded");
+    }
+
     // Load all data
     const [playersResult, matchesResult] = await Promise.all([
-      supabaseClient.from("players").select("*"),
-      supabaseClient.from("matches").select("*"),
+      supabaseClient
+        .from("players")
+        .select("*")
+        .eq("club_id", state.currentClub.id),
+      supabaseClient
+        .from("matches")
+        .select("*")
+        .eq("club_id", state.currentClub.id),
     ]);
 
     if (playersResult.error) throw playersResult.error;
@@ -2142,7 +2335,7 @@ function renderTeamLeaderboard(teamStats) {
 // Initialization
 // ============================================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // Initialize navigation
   initNavigation();
 
@@ -2162,6 +2355,19 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("generate-teams-btn")
     ?.addEventListener("click", generateRandomTeams);
+
+  // Load club info first, then load initial data
+  showLoading();
+  const club = await loadClubInfo();
+  hideLoading();
+
+  if (!club) {
+    showToast(
+      "Failed to load club information. Please check your configuration.",
+      "error",
+    );
+    return;
+  }
 
   // Load initial data (leaderboard is the landing page)
   loadLeaderboard();
