@@ -1,0 +1,985 @@
+// ============================================================
+// Variables
+// ============================================================
+
+// Colors - Modern Blue/Teal Theme
+$primary: #2563eb;
+$primary-dark: #1e40af;
+$primary-light: #3b82f6;
+$secondary: #0891b2;
+$secondary-dark: #0e7490;
+
+$success: #10b981;
+$danger: #ef4444;
+$warning: #f59e0b;
+$info: #06b6d4;
+
+$bg-primary: #0f172a;
+$bg-secondary: #1e293b;
+$bg-card: #1e293b;
+$bg-hover: #334155;
+
+$text-primary: #f1f5f9;
+$text-secondary: #cbd5e1;
+$text-muted: #94a3b8;
+
+$border-color: #334155;
+$shadow: rgba(0, 0, 0, 0.3);
+
+// Spacing
+$spacing-xs: 0.5rem;
+$spacing-sm: 0.75rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+
+// Border radius
+$radius-sm: 0.375rem;
+$radius-md: 0.5rem;
+$radius-lg: 0.75rem;
+$radius-xl: 1rem;
+
+// Transitions
+$transition: all 0.3s ease;
+
+// ============================================================
+// Reset & Base Styles
+// ============================================================
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: $text-primary;
+  background-color: $bg-primary;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input,
+select,
+textarea {
+  font-family: "Poppins", sans-serif;
+}
+
+// ============================================================
+// Layout
+// ============================================================
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+// ============================================================
+// Side Menu
+// ============================================================
+
+.side-menu {
+  width: 260px;
+  background: linear-gradient(180deg, $bg-secondary 0%, $bg-primary 100%);
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  padding: $spacing-xl 0;
+  box-shadow: 2px 0 10px $shadow;
+
+  .logo {
+    padding: 0 $spacing-lg;
+    margin-bottom: $spacing-2xl;
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: $text-primary;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+    }
+  }
+
+  .menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    padding: 0 $spacing-md;
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      padding: $spacing-md $spacing-lg;
+      border-radius: $radius-lg;
+      color: $text-secondary;
+      font-weight: 500;
+      transition: $transition;
+      position: relative;
+
+      .icon {
+        font-size: 1.25rem;
+      }
+
+      &:hover {
+        background-color: $bg-hover;
+        color: $text-primary;
+        transform: translateX(4px);
+      }
+
+      &.active {
+        background: linear-gradient(90deg, $primary 0%, $primary-dark 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba($primary, 0.3);
+
+        &::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 4px;
+          height: 70%;
+          background-color: white;
+          border-radius: 0 2px 2px 0;
+        }
+      }
+    }
+  }
+}
+
+// ============================================================
+// Main Content
+// ============================================================
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  background-color: $bg-primary;
+  padding: $spacing-2xl;
+
+  .page {
+    display: none;
+    animation: fadeIn 0.3s ease;
+
+    &.active {
+      display: block;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================================
+// Page Header
+// ============================================================
+
+.page-header {
+  margin-bottom: $spacing-2xl;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: $spacing-xs;
+  }
+
+  .subtitle {
+    color: $text-muted;
+    font-size: 1rem;
+  }
+}
+
+// ============================================================
+// Content Card
+// ============================================================
+
+.content-card {
+  background-color: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $radius-xl;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-xl;
+  box-shadow: 0 4px 20px $shadow;
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: $spacing-lg;
+    color: $text-primary;
+  }
+}
+
+// ============================================================
+// Forms
+// ============================================================
+
+.form-inline {
+  display: flex;
+  gap: $spacing-md;
+  align-items: center;
+}
+
+.form-row {
+  display: flex;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  flex: 1;
+  min-width: 200px;
+
+  label {
+    font-weight: 500;
+    color: $text-secondary;
+    font-size: 0.875rem;
+  }
+}
+
+.input {
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  background-color: $bg-secondary;
+  color: $text-primary;
+  font-size: 1rem;
+  transition: $transition;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+
+  &::placeholder {
+    color: $text-muted;
+  }
+}
+
+select.input {
+  cursor: pointer;
+}
+
+.form-actions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+}
+
+// ============================================================
+// Buttons
+// ============================================================
+
+.btn {
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-md;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: $transition;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px $shadow;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, $primary 0%, $primary-dark 100%);
+  color: white;
+
+  &:hover {
+    box-shadow: 0 6px 20px rgba($primary, 0.4);
+  }
+}
+
+.btn-secondary {
+  background-color: $secondary;
+  color: white;
+
+  &:hover {
+    background-color: $secondary-dark;
+  }
+}
+
+.btn-danger {
+  background-color: $danger;
+  color: white;
+
+  &:hover {
+    background-color: darken($danger, 10%);
+  }
+}
+
+.btn-small {
+  padding: $spacing-xs $spacing-sm;
+  font-size: 0.875rem;
+}
+
+// ============================================================
+// Players Grid
+// ============================================================
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: $spacing-md;
+}
+
+.player-card {
+  background-color: $bg-secondary;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: $transition;
+
+  &:hover {
+    border-color: $primary;
+    box-shadow: 0 4px 12px rgba($primary, 0.2);
+  }
+
+  .player-name {
+    font-weight: 500;
+    color: $text-primary;
+  }
+
+  .player-actions {
+    display: flex;
+    gap: $spacing-xs;
+  }
+}
+
+// ============================================================
+// Player Selection (Checkboxes)
+// ============================================================
+
+.player-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.player-checkbox {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background-color: $bg-secondary;
+  border: 2px solid $border-color;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: $transition;
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: $primary;
+  }
+
+  label {
+    cursor: pointer;
+    color: $text-primary;
+    font-weight: 500;
+  }
+
+  &:hover {
+    border-color: $primary-light;
+    background-color: $bg-hover;
+  }
+
+  &.selected {
+    border-color: $primary;
+    background-color: rgba($primary, 0.1);
+  }
+}
+
+// ============================================================
+// Teams Grid
+// ============================================================
+
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-lg;
+}
+
+.team-card {
+  background: linear-gradient(135deg, $bg-secondary 0%, $bg-hover 100%);
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: 0 4px 12px $shadow;
+
+  .team-header {
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-bottom: $spacing-md;
+    color: $primary-light;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .team-players {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    .player {
+      padding: $spacing-sm;
+      background-color: rgba(white, 0.05);
+      border-radius: $radius-sm;
+      color: $text-primary;
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+
+      &::before {
+        content: "👤";
+      }
+    }
+  }
+}
+
+// ============================================================
+// Match Setup
+// ============================================================
+
+.teams-match-setup {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: $spacing-xl;
+  align-items: start;
+  margin: $spacing-lg 0;
+
+  .team-setup {
+    background-color: $bg-secondary;
+    padding: $spacing-lg;
+    border-radius: $radius-lg;
+    border: 1px solid $border-color;
+
+    h4 {
+      margin-bottom: $spacing-md;
+      color: $primary-light;
+      font-size: 1.125rem;
+    }
+
+    .form-group {
+      margin-bottom: $spacing-md;
+    }
+  }
+
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 2rem;
+
+    span {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $text-muted;
+      background-color: $bg-secondary;
+      padding: $spacing-sm $spacing-md;
+      border-radius: $radius-md;
+      border: 1px solid $border-color;
+    }
+  }
+}
+
+// ============================================================
+// Matches List
+// ============================================================
+
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.match-card {
+  background-color: $bg-secondary;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  transition: $transition;
+
+  &:hover {
+    border-color: $primary;
+    box-shadow: 0 4px 12px rgba($primary, 0.2);
+  }
+
+  .match-date {
+    font-size: 0.875rem;
+    color: $text-muted;
+    margin-bottom: $spacing-sm;
+  }
+
+  .match-teams {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: $spacing-lg;
+    align-items: center;
+
+    .team {
+      .team-name {
+        font-weight: 600;
+        color: $text-primary;
+        margin-bottom: $spacing-xs;
+      }
+
+      .players {
+        font-size: 0.875rem;
+        color: $text-secondary;
+      }
+
+      .score {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-top: $spacing-xs;
+
+        &.winner {
+          color: $success;
+        }
+
+        &.loser {
+          color: $text-muted;
+        }
+      }
+    }
+
+    .vs {
+      font-weight: 700;
+      color: $text-muted;
+    }
+  }
+
+  .match-actions {
+    margin-top: $spacing-md;
+    display: flex;
+    gap: $spacing-sm;
+    justify-content: flex-end;
+  }
+}
+
+// ============================================================
+// Tables (Leaderboard)
+// ============================================================
+
+.leaderboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xl;
+}
+
+.leaderboard-section {
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: $spacing-lg;
+    color: $text-primary;
+  }
+}
+
+// Team Highlights Section
+.highlights-section {
+  .highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: $spacing-lg;
+  }
+}
+
+.highlight-card {
+  background-color: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  transition: $transition;
+  box-shadow: 0 4px 20px $shadow;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px $shadow;
+  }
+
+  &.success {
+    border-left: 4px solid $success;
+    background: linear-gradient(135deg, $bg-card 0%, rgba($success, 0.1) 100%);
+  }
+
+  &.danger {
+    border-left: 4px solid $danger;
+    background: linear-gradient(135deg, $bg-card 0%, rgba($danger, 0.1) 100%);
+  }
+
+  .highlight-icon {
+    font-size: 3rem;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  }
+
+  .highlight-content {
+    flex: 1;
+
+    h4 {
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $text-muted;
+      margin-bottom: $spacing-xs;
+      font-weight: 600;
+    }
+
+    .highlight-team {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: $text-primary;
+      margin-bottom: $spacing-xs;
+    }
+
+    .highlight-stat {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: $spacing-xs;
+    }
+
+    .highlight-detail {
+      font-size: 0.875rem;
+      color: $text-secondary;
+    }
+  }
+
+  &.success .highlight-stat {
+    color: $success;
+  }
+
+  &.danger .highlight-stat {
+    color: $danger;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: $radius-lg;
+  border: 1px solid $border-color;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: $bg-card;
+
+  thead {
+    background: linear-gradient(90deg, $primary 0%, $primary-dark 100%);
+
+    tr {
+      th {
+        padding: $spacing-md $spacing-lg;
+        text-align: left;
+        font-weight: 600;
+        color: white;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border-color;
+      transition: $transition;
+
+      &:hover {
+        background-color: $bg-hover;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      td {
+        padding: $spacing-md $spacing-lg;
+        color: $text-primary;
+
+        &:first-child {
+          font-weight: 600;
+          color: $primary-light;
+        }
+      }
+    }
+  }
+
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-weight: 700;
+
+    &.rank-1 {
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      color: #000;
+      box-shadow: 0 2px 8px rgba(#ffd700, 0.5);
+    }
+
+    &.rank-2 {
+      background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+      color: #000;
+      box-shadow: 0 2px 8px rgba(#c0c0c0, 0.5);
+    }
+
+    &.rank-3 {
+      background: linear-gradient(135deg, #cd7f32 0%, #e6a85c 100%);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(#cd7f32, 0.5);
+    }
+  }
+
+  .win-rate {
+    font-weight: 600;
+
+    &.high {
+      color: $success;
+    }
+
+    &.medium {
+      color: $warning;
+    }
+
+    &.low {
+      color: $text-muted;
+    }
+  }
+}
+
+// ============================================================
+// Loading Overlay
+// ============================================================
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($bg-primary, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid $border-color;
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================================
+// Toast Notifications
+// ============================================================
+
+.toast-container {
+  position: fixed;
+  top: $spacing-xl;
+  right: $spacing-xl;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.toast {
+  min-width: 300px;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 20px $shadow;
+  animation: slideIn 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  &.success {
+    background: linear-gradient(90deg, $success 0%, darken($success, 10%) 100%);
+  }
+
+  &.error {
+    background: linear-gradient(90deg, $danger 0%, darken($danger, 10%) 100%);
+  }
+
+  &.info {
+    background: linear-gradient(90deg, $info 0%, darken($info, 10%) 100%);
+  }
+
+  &.warning {
+    background: linear-gradient(90deg, $warning 0%, darken($warning, 10%) 100%);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// ============================================================
+// Responsive Design
+// ============================================================
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .side-menu {
+    width: 100%;
+    padding: $spacing-md 0;
+    border-right: none;
+    border-bottom: 1px solid $border-color;
+
+    .menu-items {
+      flex-direction: row;
+      overflow-x: auto;
+      padding: 0 $spacing-md;
+
+      .menu-item {
+        flex-direction: column;
+        gap: $spacing-xs;
+        min-width: 80px;
+        padding: $spacing-sm;
+
+        .label {
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
+
+  .main-content {
+    padding: $spacing-lg;
+  }
+
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .teams-match-setup {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+
+    .vs-divider {
+      padding-top: 0;
+    }
+  }
+
+  .players-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teams-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-container {
+    overflow-x: scroll;
+  }
+}
+
+// ============================================================
+// Utility Classes
+// ============================================================
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: $text-muted;
+}
+
+.mt-1 {
+  margin-top: $spacing-md;
+}
+
+.mt-2 {
+  margin-top: $spacing-lg;
+}
+
+.mb-1 {
+  margin-bottom: $spacing-md;
+}
+
+.mb-2 {
+  margin-bottom: $spacing-lg;
+}
+
+.hidden {
+  display: none !important;
+}

@@ -1,0 +1,16 @@
+{
+  "name": "badminton-manager",
+  "version": "1.0.0",
+  "description": "Badminton team and match management app",
+  "scripts": {
+    "watch": "sass --watch styles.scss:styles.css",
+    "build": "sass styles.scss:styles.css --style compressed",
+    "dev": "sass --watch styles.scss:styles.css & python3 -m http.server 8080"
+  },
+  "devDependencies": {
+    "sass": "^1.77.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.0"
+  }
+}

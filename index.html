@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smash House</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Side Menu -->
+      <aside class="side-menu">
+        <div class="logo">
+          <h1>🏸 Smash House</h1>
+        </div>
+        <nav class="menu-items">
+          <a
+            href="#leaderboard"
+            class="menu-item active"
+            data-page="leaderboard"
+          >
+            <span class="icon">🏆</span>
+            <span class="label">Leaderboard</span>
+          </a>
+          <a href="#players" class="menu-item" data-page="players">
+            <span class="icon">👥</span>
+            <span class="label">Players</span>
+          </a>
+          <a href="#teams" class="menu-item" data-page="teams">
+            <span class="icon">🎲</span>
+            <span class="label">Create Teams</span>
+          </a>
+          <a href="#matches" class="menu-item" data-page="matches">
+            <span class="icon">📊</span>
+            <span class="label">Matches</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <!-- Leaderboard Page (Landing Page) -->
+        <section id="page-leaderboard" class="page active">
+          <header class="page-header">
+            <h2>Leaderboard</h2>
+            <p class="subtitle">Track player and team performance</p>
+          </header>
+
+          <div class="leaderboard-container">
+            <!-- Team Highlights -->
+            <div class="leaderboard-section highlights-section">
+              <h3>Team Highlights</h3>
+              <div class="highlights-grid" id="team-highlights">
+                <!-- Populated by JavaScript -->
+              </div>
+            </div>
+
+            <!-- Player Leaderboard -->
+            <div class="leaderboard-section">
+              <h3>Player Rankings</h3>
+              <div class="table-container">
+                <table id="player-leaderboard" class="leaderboard-table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Player</th>
+                      <th>Wins</th>
+                      <th>Losses</th>
+                      <th>Win Rate</th>
+                      <th>Points For</th>
+                      <th>Points Against</th>
+                    </tr>
+                  </thead>
+                  <tbody id="player-leaderboard-body">
+                    <!-- Populated by JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Team Leaderboard -->
+            <div class="leaderboard-section">
+              <h3>Team Performance</h3>
+              <div class="table-container">
+                <table id="team-leaderboard" class="leaderboard-table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Team</th>
+                      <th>Wins</th>
+                      <th>Losses</th>
+                      <th>Win Rate</th>
+                      <th>Avg Score</th>
+                    </tr>
+                  </thead>
+                  <tbody id="team-leaderboard-body">
+                    <!-- Populated by JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Players Management Page -->
+        <section id="page-players" class="page">
+          <header class="page-header">
+            <h2>Player Management</h2>
+            <p class="subtitle">Add and manage players</p>
+          </header>
+
+          <div class="content-card">
+            <h3>Add New Player</h3>
+            <form id="add-player-form" class="form-inline">
+              <input
+                type="text"
+                id="player-name"
+                class="input"
+                placeholder="Enter player name"
+                required
+              />
+              <button type="submit" class="btn btn-primary">Add Player</button>
+            </form>
+          </div>
+
+          <div class="content-card">
+            <h3>All Players</h3>
+            <div id="players-list" class="players-grid">
+              <!-- Populated by JavaScript -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Create Teams Page -->
+        <section id="page-teams" class="page">
+          <header class="page-header">
+            <h2>Create Random Teams</h2>
+            <p class="subtitle">Select players and generate teams for today</p>
+          </header>
+
+          <div class="content-card">
+            <h3>Select Players (Must be even number)</h3>
+            <div id="player-selection" class="player-selection">
+              <!-- Populated by JavaScript -->
+            </div>
+            <div class="form-actions">
+              <button id="generate-teams-btn" class="btn btn-primary">
+                🎲 Generate Random Teams
+              </button>
+            </div>
+          </div>
+
+          <div id="generated-teams" class="content-card" style="display: none">
+            <h3>Today's Teams</h3>
+            <div id="teams-display" class="teams-grid">
+              <!-- Populated by JavaScript -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Matches Page -->
+        <section id="page-matches" class="page">
+          <header class="page-header">
+            <h2>Match Scoring</h2>
+            <p class="subtitle">Record match results</p>
+          </header>
+
+          <div class="content-card">
+            <h3>Add Match Result</h3>
+            <form id="add-match-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Match Date</label>
+                  <input type="date" id="match-date" class="input" required />
+                </div>
+              </div>
+
+              <div class="teams-match-setup">
+                <!-- Team 1 -->
+                <div class="team-setup">
+                  <h4>Team 1</h4>
+                  <div class="form-group">
+                    <label>Player 1</label>
+                    <select id="team1-player1" class="input" required>
+                      <option value="">Select player</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Player 2</label>
+                    <select id="team1-player2" class="input" required>
+                      <option value="">Select player</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Score</label>
+                    <input
+                      type="number"
+                      id="team1-score"
+                      class="input"
+                      min="0"
+                      placeholder="21"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <!-- VS Divider -->
+                <div class="vs-divider">
+                  <span>VS</span>
+                </div>
+
+                <!-- Team 2 -->
+                <div class="team-setup">
+                  <h4>Team 2</h4>
+                  <div class="form-group">
+                    <label>Player 1</label>
+                    <select id="team2-player1" class="input" required>
+                      <option value="">Select player</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Player 2</label>
+                    <select id="team2-player2" class="input" required>
+                      <option value="">Select player</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Score</label>
+                    <input
+                      type="number"
+                      id="team2-score"
+                      class="input"
+                      min="0"
+                      placeholder="19"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                  Save Match
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="content-card">
+            <h3>Recent Matches</h3>
+            <div id="matches-list" class="matches-list">
+              <!-- Populated by JavaScript -->
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Import Supabase from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Main App Script -->
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
