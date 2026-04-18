@@ -4,12 +4,49 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Smash House</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#667eea" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+
+    <!-- Apple Touch Icons (iOS) -->
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/icons/icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="192x192"
+      href="/icons/icon-192x192.png"
+    />
+
+    <!-- iOS Web App Capable -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Smash House" />
+
+    <!-- Description for SEO -->
+    <meta
+      name="description"
+      content="Track badminton matches, players, and team performance for your club"
+    />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -362,6 +399,77 @@
 
     <!-- Import Supabase from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      // Register Service Worker for PWA
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log(
+                "Service Worker registered successfully:",
+                registration.scope,
+              );
+            })
+            .catch((error) => {
+              console.log("Service Worker registration failed:", error);
+            });
+        });
+      }
+
+      // PWA Install Prompt (Android)
+      let deferredPrompt;
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        // Show custom install button or toast
+        console.log("PWA install prompt available");
+
+        // Optional: Show a custom install notification
+        const installToast = document.createElement("div");
+        installToast.className = "toast info";
+        installToast.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+            <span>📱 Install app for better experience!</span>
+            <button onclick="installPWA()" style="background: white; color: #667eea; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer;">Install</button>
+          </div>
+        `;
+        document.getElementById("toast-container").appendChild(installToast);
+
+        setTimeout(() => {
+          installToast.remove();
+        }, 8000);
+      });
+
+      // Function to trigger PWA install
+      window.installPWA = async () => {
+        if (!deferredPrompt) {
+          return;
+        }
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(
+          `User ${outcome === "accepted" ? "accepted" : "dismissed"} the install prompt`,
+        );
+        deferredPrompt = null;
+      };
+
+      // Track when PWA is installed
+      window.addEventListener("appinstalled", () => {
+        console.log("PWA installed successfully!");
+        deferredPrompt = null;
+      });
+
+      // Detect if running as standalone PWA
+      if (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true
+      ) {
+        console.log("Running as installed PWA");
+      }
+    </script>
 
     <!-- Main App Script -->
     <script type="module" src="app.js"></script>
